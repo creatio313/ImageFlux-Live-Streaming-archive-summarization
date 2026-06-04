@@ -1,31 +1,31 @@
 {
   "service_principal": {
-    "key_kid": "your-service-principal-key-kid",
-    "resource_id": "your-service-principal-resource-id",
-    "private_key_pem_path": "/app/service-principal-private-key.pem"
+    "key_kid": "サービスプリンシパルキーのKID",
+    "resource_id": "サービスプリンシパルのリソースID",
+    "private_key_pem_path": "サービスプリンシパルキーに紐づいた秘密鍵のパス"
   },
   "simplemq": {
-    "api_key": "your-simplemq-api-key",
-    "queue_name": "your-queue-name",
+    "api_key": "シンプルMQのキュー認証APIキー",
+    "queue_name": "キュー名称",
     "poll_interval": "5s",
     "error_retry_interval": "60s"
   },
   "archive": {
-    "http_domain": "https://archive.example.com"
+    "http_domain": "配信録画をホストするさくらのウェブアクセラレータのドメイン"
   },
   "ai_engine": {
-    "api_key": "your-ai-engine-api-key",
+    "api_key": "さくらのAI EngineのAPIキー",
     "transcription_model": "whisper-large-v3-turbo",
     "summary_model": "llm-jp-3.1-8x13b-instruct"
   },
   "object_storage": {
     "endpoint": "s3.isk01.sakurastorage.jp",
-    "access_key": "your-access-key",
-    "secret_key": "your-secret-key",
-    "bucket": "your-bucket",
+    "access_key": "アクセスキーID",
+    "secret_key": "シークレットアクセスキー",
+    "bucket": "バケット名",
     "region": "jp-north-1"
   },
   "notification": {
-    "group_id": "123456789012"
+    "group_id": "シンプル通知のグループID"
   }
 }
