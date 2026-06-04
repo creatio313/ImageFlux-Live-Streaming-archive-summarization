@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>S3 HLS Player</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 20px;
+        background-color: #000000;
+      }
+      h2 {
+        color: #d7003a;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: #0d0015;
+        padding: 20px;
+        border-radius: 8px;
+      }
+      .input-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      input[type="text"] {
+        flex: 1;
+        padding: 10px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #d7003a;
+        color: #fff;
+        border: none;
+      }
+      video {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      .text-block {
+        background: #111;
+        color: #eee;
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 6px;
+        white-space: pre-wrap;
+      }
+      .section-title {
+        color: #ff5a7a;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>S3 HLS Player</h2>
+
+      <div class="input-group">
+        <input type="text" id="m3u8-url" placeholder="path/master.m3u8" />
+        <button onclick="playVideo()">再生</button>
+      </div>
+
+      <video id="video" controls></video>
+
+      <div id="summary-area"></div>
+      <div id="transcript-area"></div>
+    </div>
+
+    <script>
+      var hls = null;
+
+      function getBasePath(url) {
+        return url.substring(0, url.lastIndexOf("/") + 1);
+      }
+
+      async function fetchTextIfExists(url) {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) return null;
+          return await res.text();
+        } catch {
+          return null;
+        }
+      }
+
+      async function loadTextFiles(basePath) {
+        const summaryArea = document.getElementById("summary-area");
+        const transcriptArea = document.getElementById("transcript-area");
+
+        summaryArea.innerHTML = "";
+        transcriptArea.innerHTML = "";
+
+        const summary = await fetchTextIfExists(basePath + "summary.txt");
+        if (summary) {
+          summaryArea.innerHTML = `
+            <div class="section-title">要約</div>
+            <div class="text-block">${escapeHtml(summary)}</div>
+          `;
+        }
+
+        const transcript = await fetchTextIfExists(basePath + "transcript.txt");
+        if (transcript) {
+          transcriptArea.innerHTML = `
+            <div class="section-title">文字起こし</div>
+            <div class="text-block">${escapeHtml(transcript)}</div>
+          `;
+        }
+      }
+
+      function escapeHtml(text) {
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      async function playVideo() {
+        var video = document.getElementById("video");
+        var url = document.getElementById("m3u8-url").value;
+
+        if (!url) {
+          alert("m3u8ファイルのURLを入力してください");
+          return;
+        }
+
+        if (hls) {
+          hls.destroy();
+        }
+
+        if (Hls.isSupported()) {
+          hls = new Hls();
+          hls.loadSource(url);
+          hls.attachMedia(video);
+        } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+          video.src = url;
+        } else {
+          alert("HLS再生に対応していません");
+        }
+
+        const basePath = getBasePath(url);
+        loadTextFiles(basePath);
+      }
+    </script>
+  </body>
+</html>

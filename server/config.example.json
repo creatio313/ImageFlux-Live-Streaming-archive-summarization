@@ -1,0 +1,31 @@
+{
+  "service_principal": {
+    "key_kid": "your-service-principal-key-kid",
+    "resource_id": "your-service-principal-resource-id",
+    "private_key_pem_path": "/app/service-principal-private-key.pem"
+  },
+  "simplemq": {
+    "api_key": "your-simplemq-api-key",
+    "queue_name": "your-queue-name",
+    "poll_interval": "5s",
+    "error_retry_interval": "60s"
+  },
+  "archive": {
+    "http_domain": "https://archive.example.com"
+  },
+  "ai_engine": {
+    "api_key": "your-ai-engine-api-key",
+    "transcription_model": "whisper-large-v3-turbo",
+    "summary_model": "llm-jp-3.1-8x13b-instruct"
+  },
+  "object_storage": {
+    "endpoint": "s3.isk01.sakurastorage.jp",
+    "access_key": "your-access-key",
+    "secret_key": "your-secret-key",
+    "bucket": "your-bucket",
+    "region": "jp-north-1"
+  },
+  "notification": {
+    "group_id": "123456789012"
+  }
+}

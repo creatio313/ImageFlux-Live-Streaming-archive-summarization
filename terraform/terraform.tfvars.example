@@ -1,0 +1,7 @@
+access_token                           = ""
+access_token_secret                    = ""
+email_address                          = ""
+os_password                            = ""
+service_principal_key_kid              = ""
+service_principal_resource_id          = ""
+service_principal_private_key_pem_path = ""
