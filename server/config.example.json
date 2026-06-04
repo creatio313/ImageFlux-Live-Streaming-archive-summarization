@@ -16,7 +16,7 @@
   "ai_engine": {
     "api_key": "さくらのAI EngineのAPIキー",
     "transcription_model": "whisper-large-v3-turbo",
-    "summary_model": "llm-jp-3.1-8x13b-instruct"
+    "summary_model": "llm-jp-3.1-8x13b-instruct4"
   },
   "object_storage": {
     "endpoint": "s3.isk01.sakurastorage.jp",
