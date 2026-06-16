@@ -14,12 +14,12 @@ const (
 	simpleNotificationEndpointFmt = "https://secure.sakura.ad.jp/cloud/zone/is1a/api/cloud/1.1/commonserviceitem/%s/simplenotification/message"
 
 	//既定設定値
-	defaultConfigPath             = "./config.json"
-	defaultPrivateKeyPEMPath      = "/app/service-principal-private-key.pem"
-	defaultTranscriptionModel     = "whisper-large-v3-turbo"
-	defaultSummaryModel           = "llm-jp-3.1-8x13b-instruct"
-	maxAudioDurationSeconds       = 25 * 60
-	maxAudioSizeBytes             = 30 * 1024 * 1024
+	defaultConfigPath         = "./config.json"
+	defaultPrivateKeyPEMPath  = "/app/service-principal-private-key.pem"
+	defaultTranscriptionModel = "whisper-large-v3-turbo"
+	defaultSummaryModel       = "llm-jp-3.1-8x13b-instruct"
+	maxAudioDurationSeconds   = 25 * 60
+	maxAudioSizeBytes         = 30 * 1024 * 1024
 )
 
 type appConfig struct {
@@ -82,12 +82,14 @@ type archiveHandlingServer struct {
 	objectStorageBucket string
 	httpClient          *http.Client
 }
-//シンプルMQのメッセージ受信応答
+
+// シンプルMQのメッセージ受信応答
 type simpleMQReceiveResponse struct {
 	Result   string      `json:"result"`
 	Messages []mqMessage `json:"messages"`
 }
-//シンプルMQのメッセージ応答のうちメッセージ部分（配列要素）
+
+// シンプルMQのメッセージ応答のうちメッセージ部分（配列要素）
 type mqMessage struct {
 	ID                  string `json:"id"`
 	Content             string `json:"content"`
@@ -97,18 +99,19 @@ type mqMessage struct {
 	AcquiredAt          int64  `json:"acquired_at"`
 	VisibilityTimeoutAt int64  `json:"visibility_timeout_at"`
 }
-//シンプルMQのメッセージ応答のうちメッセージ内容（ImageFluxのWebhookの内容に相当）
+
+// シンプルMQのメッセージ応答のうちメッセージ内容（ImageFluxのWebhookの内容に相当）
 type messageContent struct {
 	ChannelID string          `json:"channel_id"`
 	Type      string          `json:"type"`
 	Data      webhookFileInfo `json:"data"`
 }
 type webhookFileInfo struct {
-	DestURI     string `json:"dest_uri"`
-	FilePath    string `json:"file_path"`
-	Size        int64  `json:"size"`
-	FileType    string `json:"file_type"`
-	AbsoluteURL string `json:"absolute_url"`
+	CurrentDestURI  string `json:"current_dest_uri"`
+	CurrentFilePath string `json:"current_file_path"`
+	Size            int64  `json:"size"`
+	FileType        string `json:"file_type"`
+	AbsoluteURL     string `json:"absolute_url"`
 }
 
 type simpleNotificationPayload struct {

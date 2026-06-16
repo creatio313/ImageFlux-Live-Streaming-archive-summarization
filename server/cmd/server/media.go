@@ -10,22 +10,11 @@ import (
 	"strings"
 )
 
-//アーカイブのURLをさくらのウェブアクセラレータのドメイン+パスの形式で構築する
+// アーカイブのURLをさくらのウェブアクセラレータのドメイン+パスの形式で構築する
 func buildArchiveURL(domain string, payload messageContent) (string, error) {
-	s3URI := strings.TrimSpace(payload.Data.DestURI)
-	if !strings.HasPrefix(s3URI, "s3://") {
-		return "", fmt.Errorf("dest_uriはs3://形式である必要があります: %q", s3URI)
-	}
-
-	// s3://bucket/path/to/file から path/to/file 部分のみを取り出す。
-	rest := strings.TrimPrefix(s3URI, "s3://")
-	parts := strings.SplitN(rest, "/", 2)
-	if len(parts) != 2 || strings.TrimSpace(parts[0]) == "" {
-		return "", fmt.Errorf("dest_uriの形式が不正です: %q", s3URI)
-	}
-	archivePath := strings.Trim(path.Clean("/"+parts[1]), "/")
+	archivePath := strings.Trim(path.Clean("/"+strings.TrimSpace(payload.Data.CurrentFilePath)), "/")
 	if archivePath == "" || archivePath == "." {
-		return "", fmt.Errorf("dest_uriからアーカイブパスを取得できません: %q", s3URI)
+		return "", fmt.Errorf("current_file_pathからアーカイブパスを取得できません: %q", payload.Data.CurrentFilePath)
 	}
 
 	// ドメインの正規化

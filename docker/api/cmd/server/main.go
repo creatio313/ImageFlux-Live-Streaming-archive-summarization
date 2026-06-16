@@ -29,11 +29,11 @@ type WebhookPayload struct {
 
 // アーカイブ作成時のイベントWebhook通知のうち、dataの子項目
 type WebhookData struct {
-	DestURI     string `json:"dest_uri"`
-	FilePath    string `json:"file_path"`
-	Size        int64  `json:"size"`
-	FileType    string `json:"file_type"`
-	AbsoluteURL string `json:"absolute_url"`
+	CurrentDestURI  string `json:"current_dest_uri"`
+	CurrentFilePath string `json:"current_file_path"`
+	Size            int64  `json:"size"`
+	FileType        string `json:"file_type"`
+	AbsoluteURL     string `json:"absolute_url"`
 }
 
 // シンプルMQに送信するメッセージの構造
@@ -73,6 +73,7 @@ func main() {
 		log.Fatalf("サーバの起動に失敗しました: %v", err)
 	}
 }
+
 /***
 メインロジック
 ***/
@@ -94,6 +95,7 @@ func newSimpleMQClientFromEnv() (*simpleMQClient, error) {
 		httpClient: &http.Client{},
 	}, nil
 }
+
 //Webhook通知を処理するHTTPハンドラー関数
 func webhookHandler(notifier *simpleMQClient) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -129,8 +131,8 @@ func webhookHandler(notifier *simpleMQClient) http.HandlerFunc {
 		// フィルタリング対象のtype値の場合は内容を変数化。
 		channelID := payload.ChannelID
 		eventType := payload.Type
-		destURI := payload.Data.DestURI
-		filePath := payload.Data.FilePath
+		currentDestURI := payload.Data.CurrentDestURI
+		currentFilePath := payload.Data.CurrentFilePath
 		size := payload.Data.Size
 		fileType := payload.Data.FileType
 		absoluteURL := payload.Data.AbsoluteURL
@@ -139,8 +141,8 @@ func webhookHandler(notifier *simpleMQClient) http.HandlerFunc {
 			"Webhookを処理します: チャンネルID：%q タイプ：%q アーカイブ保存先URI：%q ファイルパス：%q ファイルサイズ：%d ファイル形式：%q 復元URL（欠損時のみ）：%q",
 			channelID,
 			eventType,
-			destURI,
-			filePath,
+			currentDestURI,
+			currentFilePath,
 			size,
 			fileType,
 			absoluteURL,

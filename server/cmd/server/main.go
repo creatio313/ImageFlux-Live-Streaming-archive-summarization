@@ -105,9 +105,12 @@ func runConsumerLoop(ctx context.Context, server *archiveHandlingServer, pollInt
 		}
 	}
 }
-/***
+
+/*
+**
 メイン処理
-***/
+**
+*/
 func handleMessage(ctx context.Context, server *archiveHandlingServer, msg mqMessage) error {
 	//メッセージ内容を取得する
 	decoded, err := base64.StdEncoding.DecodeString(msg.Content)
@@ -125,7 +128,7 @@ func handleMessage(ctx context.Context, server *archiveHandlingServer, msg mqMes
 		msg.ID,
 		payload.ChannelID,
 		payload.Type,
-		payload.Data.FilePath,
+		payload.Data.CurrentFilePath,
 	)
 
 	//m3u8へのアクセスURLを構築する

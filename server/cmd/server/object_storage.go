@@ -13,11 +13,11 @@ import (
 将来的な処理分岐に備え、アップロード関数を文字起こし用と要約用で分けているが、現状は両者ともテキストオブジェクトをアップロードするだけの同一処理になっている。
 ***/
 func buildTranscriptObjectKey(payload messageContent) (string, error) {
-	return buildSiblingObjectKey(payload.Data.DestURI, "transcript.txt")
+	return buildSiblingObjectKey(payload.Data.CurrentFilePath, "transcript.txt")
 }
 
 func buildSummaryObjectKey(payload messageContent) (string, error) {
-	return buildSiblingObjectKey(payload.Data.DestURI, "summary.txt")
+	return buildSiblingObjectKey(payload.Data.CurrentFilePath, "summary.txt")
 }
 
 func (c *archiveHandlingServer) uploadTranscriptText(ctx context.Context, objectKey, transcript string) error {
@@ -28,21 +28,10 @@ func (c *archiveHandlingServer) uploadSummaryText(ctx context.Context, objectKey
 	return c.uploadTextObject(ctx, objectKey, summary)
 }
 
-func buildSiblingObjectKey(destURI, fileName string) (string, error) {
-	s3URI := strings.TrimSpace(destURI)
-	if !strings.HasPrefix(s3URI, "s3://") {
-		return "", fmt.Errorf("dest_uriはs3://形式である必要があります: %q", destURI)
-	}
-
-	rest := strings.TrimPrefix(s3URI, "s3://")
-	parts := strings.SplitN(rest, "/", 2)
-	if len(parts) != 2 || strings.TrimSpace(parts[0]) == "" {
-		return "", fmt.Errorf("dest_uriの形式が不正です: %q", destURI)
-	}
-
-	objectPath := strings.Trim(path.Clean("/"+parts[1]), "/")
+func buildSiblingObjectKey(currentFilePath, fileName string) (string, error) {
+	objectPath := strings.Trim(path.Clean("/"+strings.TrimSpace(currentFilePath)), "/")
 	if objectPath == "" || objectPath == "." {
-		return "", fmt.Errorf("dest_uriからオブジェクトパスを取得できません: %q", destURI)
+		return "", fmt.Errorf("current_file_pathからオブジェクトパスを取得できません: %q", currentFilePath)
 	}
 
 	//親フォルダの取得
